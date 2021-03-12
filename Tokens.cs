@@ -16,11 +16,11 @@ namespace AwkSharpTokens {
             "IS_OVER", "UNDER_EQUAL", "OVER_EQUAL", "IS_UNDER", "IS_EQUAL", "NOT_EQUAL"
         };
         public static readonly string[] ArithmeticOps = new string[] {
-            "+", "-", "*", "/", "=",  "+=", "-=", "*=", "/="
+            "+", "-", "*", "/", "=",  "+=", "-=", "*=", "/=", "(", ")"
         };
         public static readonly string[] ArithmeticOps_TOKENS = new string[] {
             "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "EQUALS", "PL_EQU", "SUB_EQU",
-            "MULT_EQU", "DIV_EQU"
+            "MULT_EQU", "DIV_EQU", "OPENING_BRACKET", "CLOSING_BRACKET"
         };
         public static readonly string[] DataTypes = new string[] {
             "int", "float", "string", "char", "bool"
