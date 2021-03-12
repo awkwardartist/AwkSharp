@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using AwkSharpVars;
 using System;
 using AwkSharpTokens;
+using AwkSharpFunctions;
 
 namespace awkSharpInterpreter {
     public class interpreter {
@@ -41,7 +42,6 @@ namespace awkSharpInterpreter {
                                 if(bracketindex == 0) break;
                                 equation.Add(inp[i]);
                             }
-                            foreach(var s in equation) Console.WriteLine(s);
                             i = iog;
                             inp.RemoveRange(i, equation.Count + 2);
                             inp.Insert(i, evaluate(equation, varType.INT).Value.ToString());
@@ -95,7 +95,6 @@ namespace awkSharpInterpreter {
                 break;
             }
             result.Value = inp[0];
-            Console.WriteLine(inp[0]);
             return result;
         }
         /// <summary>
@@ -103,6 +102,12 @@ namespace awkSharpInterpreter {
         /// after declaration.
         /// </summary>
         public static Dictionary<string, VAR> variableLis = new Dictionary<string, VAR>();
+
+        /// <summary>
+        /// the global dictionary in which all functions are stored
+        /// after declaration.
+        /// </summary>
+        public static Dictionary<string, Function> funcLis = new Dictionary<string, Function>();
 
         /// <summary>
         /// Actually executes the code, takes Compiled Awk# list as input.
@@ -310,6 +315,37 @@ namespace awkSharpInterpreter {
                         }
                     }
                     i = og_i + 1;
+                } else if(input[i].StartsWith("[V:") && i + 1 < input.Count && input[i + 1] == "OPENING_BRACKET"){
+                    // call function
+                    if(funcLis.ContainsKey(input[i].Replace("[V:", "").Replace("]", ""))){
+                        string name = (input[i].Replace("[V:", "").Replace("]", ""));
+                        i += 2; // move to open brack + 1
+                        int x = 0;
+                        for(;input[i] != "CLOSING_BRACKET"; i++, x++){
+                            funcLis[name].Args[x].Value = input[i];
+                        }
+                        foreach(var v in funcLis[name].Args)
+                            variableLis.Add(v.Name, v);
+                        interpreter.Interpret(funcLis[name].Instructions);
+                        foreach(var v in funcLis[name].Args)
+                            variableLis.Remove(v.Name);
+                    }
+                } else if(input[i].StartsWith("[FUNC:")){
+                    // function declaration
+                    string name = input[i].Replace("[FUNC:", "").Replace("]", "");
+                    i++;
+                    i++;
+                    List<VAR> args = new List<VAR>();
+                    for(; input[i] != "CLOSING_BRACKET"; i++){
+                        args.Add(new VAR(input[i].Remove(0, input[i].IndexOf(":") - 1).Replace("]", ""), 
+                        varType.INT, "nullval"));
+                        // lets just say it's an integer for now
+                    }
+
+                } else if(input[i] == "DESTROY_KEYWORD" && input[i + 1].StartsWith("[V:")){
+                    string name = input[i + 1].Remove(0, input[i + 1].IndexOf(":") + 1).Replace("]", "");
+                    if(variableLis.ContainsKey(name))
+                        variableLis.Remove(name); Console.WriteLine("destroyed " + name + ".");
                 }
             }
         }

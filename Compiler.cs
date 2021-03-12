@@ -6,8 +6,8 @@ using awkSharpInterpreter;
 using System.Text.RegularExpressions;
 /*
     note, call Awk
-    Deconstructed Interpreter & Compiler Code
-    or DIC
+    Deconstructed Interpreter & Compiler Kode
+    or DICK
 */
 namespace AwkSharpCompiler {
     public class Compiler {

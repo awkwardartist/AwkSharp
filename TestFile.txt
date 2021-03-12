@@ -3,7 +3,5 @@
     develop awk#.
 */ 
 int y = 10 * 2;
-int x = (y + 1) * (2 - 4);
-FUNC somefunc() {
-    
-}
+int xlmao = (y + 1) * (2 - 4);
+destroy xlmao;
