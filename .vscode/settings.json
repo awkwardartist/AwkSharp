@@ -1,0 +1,5 @@
+{
+    "VSCord.enabled": true,
+    "discord.enabled": true,
+    "editor.codeLens": false
+}
