@@ -224,47 +224,82 @@ namespace awkSharpInterpreter {
                     right_condition.Add(input[i]);
                    bool statement_state = false;
                    int og_i = i;
-                    switch(eval){
-                        case "IS_EQUAL":
-                            if(evaluate(left_condition, varType.INT).Value.ToString() == evaluate(right_condition, varType.INT).Value.ToString())
-                                statement_state = true;
-                            else
-                                statement_state = false;
+                   varType type = varType.INT; // placeholder to get rid of non assigned err
+                   // use full condition to get type of equation. take type of first variable or obj
+                   if(left_condition[0].StartsWith("[V:")){
+                       // get type using var
+                       string name = left_condition[0].Replace("[V:", "").Replace("]", "");
+                       type = variableLis[name].Type;
+                   } else {
+                       // get type using literal value
+                       switch(left_condition[0].Remove(left_condition[0].IndexOf(":")).Replace("[", "")){
+                            case "STR":
+                                type = varType.STRING;
                             break;
-                        case "NOT_EQUAL":
-                             if(evaluate(left_condition, varType.INT).Value.ToString() != evaluate(right_condition, varType.INT).Value.ToString())
-                                statement_state = true;
-                            else
-                                statement_state = false;
+                            case "FLOAT":
+                                type = varType.FLOAT;
                             break;
-                        case "IS_UNDER":
-                             if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) < 
-                            Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                statement_state = true;
-                            else
-                                statement_state = false;
+                            case "INT":
+                                type = varType.INT;
                             break;
-                        case "UNDER_EQUAL":
-                            if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) <= 
-                            Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                statement_state = true;
-                            else
-                                statement_state = false;
+                           
+                           default:
+                                break;
+                       }
+                   }
+                    if(type == varType.INT){
+                        switch(eval){
+                            case "IS_EQUAL":
+                                if(evaluate(left_condition, varType.INT).Value.ToString() == evaluate(right_condition, varType.INT).Value.ToString())
+                                    statement_state = true;
+                                else
+                                    statement_state = false;
+                                break;
+                            case "NOT_EQUAL":
+                                if(evaluate(left_condition, varType.INT).Value.ToString() != evaluate(right_condition, varType.INT).Value.ToString())
+                                    statement_state = true;
+                                else
+                                    statement_state = false;
+                                break;
+                            case "IS_UNDER":
+                                if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) < 
+                                Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
+                                    statement_state = true;
+                                else
+                                    statement_state = false;
+                                break;
+                            case "UNDER_EQUAL":
+                                if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) <= 
+                                Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
+                                    statement_state = true;
+                                else
+                                    statement_state = false;
+                                break;
+                            case "IS_OVER":
+                                if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) >
+                                Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
+                                    statement_state = true;
+                                else
+                                    statement_state = false;
+                                break;
+                            case "OVER_EQUAL":
+                                if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) >=
+                                Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
+                                    statement_state = true;
+                                else
+                                    statement_state = false;
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
+                    } else if(type == varType.STRING){
+                        switch(eval) {
+                            case "IS_EQUAL":
+                                if(evaluate(left_condition, varType.STRING).Value.ToString() == evaluate(right_condition, varType.STRING).Value.ToString()){
+                                    statement_state = true;
+                                }
                             break;
-                        case "IS_OVER":
-                            if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) >
-                            Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                statement_state = true;
-                            else
-                                statement_state = false;
-                            break;
-                        case "OVER_EQUAL":
-                            if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) >=
-                            Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                statement_state = true;
-                            else
-                                statement_state = false;
-                            break;
+                        }
                     }
 
                     if(statement_state){
@@ -325,7 +360,7 @@ namespace awkSharpInterpreter {
                             funcLis[name].Args[x].Value = input[i];
                         }
                         foreach(var v in funcLis[name].Args)
-                            variableLis.Add(v.Name, v);
+                            variableLis.Add(v.Name, new VAR(v.Name, v.Type, v.Value));
                         interpreter.Interpret(funcLis[name].Instructions);
                         foreach(var v in funcLis[name].Args)
                             variableLis.Remove(v.Name);

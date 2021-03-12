@@ -15,7 +15,6 @@ namespace AwkSharpCompiler {
         public static List<string> splitter(string input){
             while(input.Contains("/*"))
                 input = input.Remove(input.IndexOf("/*"), input.IndexOf("*/") - input.IndexOf("/*") + 2);
-            
             input = input.Replace("++", " += 1");
             List<string> statements = new List<string>();
             input = input.Replace("}", "};");
