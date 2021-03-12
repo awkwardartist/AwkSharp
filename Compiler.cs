@@ -58,7 +58,7 @@ namespace AwkSharpCompiler {
             List<string> wordList = new List<string>();
             for(int i = 0; i < ls.Count; i++){
                 // process each part of the list
-                ls[i] = ls[i].Replace("(", "( ").Replace(")", " )");
+                ls[i] = ls[i].Replace("(", " ( ").Replace(")", " )");
                 wordList.AddRange(ls[i].Split(" "));
             }
             for(int i = 0; i < wordList.Count; i++){
