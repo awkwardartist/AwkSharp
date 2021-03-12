@@ -2,5 +2,6 @@
     this is a test program, to
     develop awk#.
 */ 
-int x = 10 - (5 + 3);
+int y = 10 * 2;
+int x = (y + 1) * (2 - 4);
 

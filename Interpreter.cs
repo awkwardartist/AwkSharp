@@ -45,7 +45,6 @@ namespace awkSharpInterpreter {
                             i = iog;
                             inp.RemoveRange(i, equation.Count + 2);
                             inp.Insert(i, evaluate(equation, varType.INT).Value.ToString());
-                            Console.Write(inp[i]);
                         }
                     }
                     for(int i = 0; i < inp.Count; i++){
@@ -71,17 +70,6 @@ namespace awkSharpInterpreter {
                         }
                     }
                     for(int i = 0; i < inp.Count; i++){
-                        if(inp[i] == "PLUS"){
-                            if((inp[i + 1].StartsWith("[INT:") || inp[i + 1].StartsWith("[FLT:")) && (inp[i - 1].StartsWith("[INT:") || inp[i - 1].StartsWith("[FLT:"))){
-                                string valleft = inp[i - 1].Replace("[INT:", "").Replace("[FLT:", "").Replace("]", "");
-                                string valright = inp[i + 1].Replace("[INT:", "").Replace("[FLT:", "").Replace("]", "");
-                                int sum = Convert.ToInt32(valleft) + Convert.ToInt32(valright);
-                                inp.RemoveRange(i - 1, 3);
-                                inp.Insert(i - 1, "[INT:" + sum + "]");
-                            }
-                        }
-                    }
-                    for(int i = 0; i < inp.Count; i++){
                         if(inp[i] == "MINUS"){
                             if((inp[i + 1].StartsWith("[INT:") || inp[i + 1].StartsWith("[FLT:")) && (inp[i - 1].StartsWith("[INT:") || inp[i - 1].StartsWith("[FLT:"))){
                                 string valleft = inp[i - 1].Replace("[INT:", "").Replace("[FLT:", "").Replace("]", "");
@@ -92,9 +80,22 @@ namespace awkSharpInterpreter {
                             }
                         }
                     }
+                    for(int i = 0; i < inp.Count; i++){
+                        if(inp[i] == "PLUS"){
+                            if((inp[i + 1].StartsWith("[INT:") || inp[i + 1].StartsWith("[FLT:")) && (inp[i - 1].StartsWith("[INT:") || inp[i - 1].StartsWith("[FLT:"))){
+                                string valleft = inp[i - 1].Replace("[INT:", "").Replace("[FLT:", "").Replace("]", "");
+                                string valright = inp[i + 1].Replace("[INT:", "").Replace("[FLT:", "").Replace("]", "");
+                                int sum = Convert.ToInt32(valleft) + Convert.ToInt32(valright);
+                                inp.RemoveRange(i - 1, 3);
+                                inp.Insert(i - 1, "[INT:" + sum + "]");
+                            }
+                        }
+                    }
+                    
                 break;
             }
             result.Value = inp[0];
+            Console.WriteLine(inp[0]);
             return result;
         }
         /// <summary>
