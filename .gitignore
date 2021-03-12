@@ -1,0 +1,6 @@
+bin
+net5.0
+.vscode
+obj
+scripts
+awk#test.csproj

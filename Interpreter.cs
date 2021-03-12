@@ -271,7 +271,6 @@ namespace awkSharpInterpreter {
                                     if(blockIndex == 0) break;
                                     else {input[i] = "";}
                                 }
-                        
                             } else {
                                 input[i + 1] = "";
                             }
@@ -291,7 +290,6 @@ namespace awkSharpInterpreter {
                         }
                     }
                     i = og_i + 1;
-
                 }
             }
         }
