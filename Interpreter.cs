@@ -30,6 +30,25 @@ namespace awkSharpInterpreter {
                         }
                     }
                     for(int i = 0; i < inp.Count; i++){
+                        List<string> equation = new List<string>();
+                        int bracketindex = 1;
+                        int iog = i;
+                        if(inp[i] == "OPENING_BRACKET" && inp[i+1] != "CLOSING_BRACKET") {
+                            i++;
+                            for(; bracketindex > 0; i++){
+                                if(inp[i] == "CLOSING_BRACKET") bracketindex--;
+                                if(inp[i] == "OPENING_BRACKET") bracketindex++;
+                                if(bracketindex == 0) break;
+                                equation.Add(inp[i]);
+                            }
+                            foreach(var s in equation) Console.WriteLine(s);
+                            i = iog;
+                            inp.RemoveRange(i, equation.Count + 2);
+                            inp.Insert(i, evaluate(equation, varType.INT).Value.ToString());
+                            Console.Write(inp[i]);
+                        }
+                    }
+                    for(int i = 0; i < inp.Count; i++){
                         if(inp[i] == "DIVIDE"){
                             if((inp[i + 1].StartsWith("[INT:") || inp[i + 1].StartsWith("[FLT:")) && (inp[i - 1].StartsWith("[INT:") || inp[i - 1].StartsWith("[FLT:"))){
                                 string valleft = inp[i - 1].Replace("[INT:", "").Replace("[FLT:", "").Replace("]", "");
@@ -123,13 +142,13 @@ namespace awkSharpInterpreter {
                     bool carry_on = true;
                     for(int x = i + 1; x < input.Count; x++){
                         if(!carry_on){
-                            for(var ind = 0; ind < 4; ind++){
+                            for(var ind = 0; ind < 6; ind++){
                                 if(Tokens.ArithmeticOps_TOKENS[ind] == input[x]) carry_on = true;
                             }
                             if(!carry_on) break;
                         }
                         carry_on = false;
-                        for(var ind = 0; ind < 4; ind++){
+                        for(var ind = 0; ind < 6; ind++){
                             if(Tokens.ArithmeticOps_TOKENS[ind] == input[x]) carry_on = true;
                         }
                         condition.Add(input[x]);

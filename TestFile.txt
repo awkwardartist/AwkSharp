@@ -2,4 +2,5 @@
     this is a test program, to
     develop awk#.
 */ 
-int newvar_lol = 50 + 2;
+int x = 10 - (5 + 3);
+
