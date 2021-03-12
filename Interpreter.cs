@@ -332,20 +332,34 @@ namespace awkSharpInterpreter {
                     }
                 } else if(input[i].StartsWith("[FUNC:")){
                     // function declaration
+                    int ogi = i;
                     string name = input[i].Replace("[FUNC:", "").Replace("]", "");
                     i++;
                     i++;
                     List<VAR> args = new List<VAR>();
+                    List<string> instructions = new List<string>();
                     for(; input[i] != "CLOSING_BRACKET"; i++){
                         args.Add(new VAR(input[i].Remove(0, input[i].IndexOf(":") - 1).Replace("]", ""), 
                         varType.INT, "nullval"));
                         // lets just say it's an integer for now
                     }
-
+                    i++;
+                    int blockIndex = 1;
+                    for(i += 1; blockIndex > 0; i++){
+                        if(input[i] == "BLOCK_END") blockIndex--;
+                        if(input[i] == "BLOCK_START") blockIndex++;
+                        if(blockIndex == 0) break;
+                        instructions.Add(input[i]);
+                        input[i] = "";
+                    }
+                    i = ogi;
+                    funcLis.Add(name, new Function(name, instructions, args.ToArray()));
                 } else if(input[i] == "DESTROY_KEYWORD" && input[i + 1].StartsWith("[V:")){
                     string name = input[i + 1].Remove(0, input[i + 1].IndexOf(":") + 1).Replace("]", "");
                     if(variableLis.ContainsKey(name))
                         variableLis.Remove(name);
+                    if(!variableLis.ContainsKey(name))
+                        Console.WriteLine("destroyed " + name);
                 } else if(input[i] == "LOCAL_KEYWORD" && input[i + 1].StartsWith("[V")){
                     string name = input[i + 1].Remove(0, input[i + 1].IndexOf(":") + 1).Replace("]", "");
                     int bracketindex = 1;
@@ -361,6 +375,26 @@ namespace awkSharpInterpreter {
                     else 
                         input.InsertRange(i, new List<string>() {"DESTROY_KEYWORD", "[V:" + name + "]"});
                     i = ogi;
+                } else if(input[i] == "PRINT"){
+                    int ogi = i;
+                    i++;
+                    List<string> condition = new List<string>();
+                    bool carry_on = true;
+                    for(int x = i; x < input.Count; x++){
+                        if(!carry_on){
+                            for(var ind = 0; ind < 6; ind++){
+                                if(Tokens.ArithmeticOps_TOKENS[ind] == input[x]) carry_on = true;
+                            }
+                            if(!carry_on) break;
+                        }
+                        carry_on = false;
+                        for(var ind = 0; ind < 6; ind++){
+                            if(Tokens.ArithmeticOps_TOKENS[ind] == input[x]) carry_on = true;
+                        }
+                        condition.Add(input[x]);
+                    }
+                    i = ogi;
+                    Console.WriteLine(evaluate(condition, varType.INT).Value);
                 }
             }
         }

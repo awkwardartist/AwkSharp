@@ -2,13 +2,8 @@
     this is a test program, to
     develop awk#.
 */ 
-int y = 10 * 2;
-IF y equ 20 {
-    
-    local int wastrue = 1;
-    wastrue = 5;
-    wastrue -= 1;
-} EL {
-    local int was_not_true = 1;
-    was_not_true -= 10;
+FUNC newfunc(int x int y) {
+    int z = 1 + 3;
+    print z;
 }
+newfunc(10, 30);
