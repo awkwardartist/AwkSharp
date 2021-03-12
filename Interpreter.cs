@@ -346,6 +346,21 @@ namespace awkSharpInterpreter {
                     string name = input[i + 1].Remove(0, input[i + 1].IndexOf(":") + 1).Replace("]", "");
                     if(variableLis.ContainsKey(name))
                         variableLis.Remove(name); Console.WriteLine("destroyed " + name + ".");
+                } else if(input[i] == "LOCAL_KEYWORD" && input[i + 1].StartsWith("[V:")){
+                    string name = input[i + 1].Remove(0, input[i + 1].IndexOf(":") + 1).Replace("]", "");
+                    int bracketindex = 1;
+                    int ogi = i;
+                    bool block = false;
+                    for(; i < input.Count;i++){
+                        if(input[i] == "CLOSING_BRACKET") bracketindex--;
+                        if(input[i] == "OPENING_BRACKET") bracketindex++;
+                        if(bracketindex <= 0) {block = true; break;}
+                    }
+                    if(!block)
+                        input.InsertRange(i, new List<string>() {"DESTROY_KEYWORD", "[V:" + name + "]"});
+                    else 
+                        input.InsertRange(i - 1, new List<string>() {"DESTROY_KEYWORD", "[V:" + name + "]"});
+                    i = ogi;
                 }
             }
         }

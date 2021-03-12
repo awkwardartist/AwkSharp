@@ -4,4 +4,4 @@
 */ 
 int y = 10 * 2;
 int xlmao = (y + 1) * (2 - 4);
-destroy xlmao;
+local xlmao;

@@ -23,11 +23,11 @@ namespace AwkSharpTokens {
             "MULT_EQU", "DIV_EQU", 
         };
         public static readonly string[] DataTypes = new string[] {
-            "int", "float", "string", "char", "bool", "local"
+            "int", "float", "string", "char", "bool"
         };
         
         public static readonly string[] DataTypes_TOKENS = new string[] {
-            "INT", "FLT", "STR", "CHR", "BOOL", "LOC_VAR"
+            "INT", "FLT", "STR", "CHR", "BOOL", 
         };
         public static readonly string[] Instructions = new string[] {
             "ELIF", "YAND", "IF", "EL", "WHL", "FOR", "{", "}", "FUNC", "destroy"
@@ -37,10 +37,10 @@ namespace AwkSharpTokens {
             "BLOCK_END", "FUNCTION_DECLARATION", "DESTROY_KEYWORD"
         };
         public static readonly string[] misctoks = new string[] {
-            "true", "false", "or", "and"
+            "true", "false", "or", "and", "local"
         };
         public static readonly string[] misctoks_TOKENS = new string[] {
-            "TRUE_BOOL", "FALSE_BOOL", "OR_OP", "AND_OP"
+            "TRUE_BOOL", "FALSE_BOOL", "OR_OP", "AND_OP", "LOCAL_KEYWORD"
         };
         public enum TokenType {
             INSTRUCTION,
