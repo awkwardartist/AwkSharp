@@ -3,5 +3,12 @@
     develop awk#.
 */ 
 int y = 10 * 2;
-int xlmao = (y + 1) * (2 - 4);
-local xlmao;
+IF y equ 20 {
+    
+    local int wastrue = 1;
+    wastrue = 5;
+    wastrue -= 1;
+} EL {
+    local int was_not_true = 1;
+    was_not_true -= 10;
+}
