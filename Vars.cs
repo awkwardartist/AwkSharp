@@ -9,8 +9,12 @@ namespace AwkSharpVars {
         INT
         
     };
-    
+    public enum SpecialState {
+        none,
+        locked,
+    };
     public class VAR {
+        public SpecialState State {get; set;}
         public string Name {get;}
         public varType Type {get;}
         public object Value {get; set;}
@@ -18,6 +22,7 @@ namespace AwkSharpVars {
             Value = value;
             Name = name;
             Type = decType;
+            State = SpecialState.none;
         }
         
     }

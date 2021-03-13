@@ -1,2 +1,4 @@
 string hello = "hello, world!";
+lock hello;
+hello = "hi";
 print hello;

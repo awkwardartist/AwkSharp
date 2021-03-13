@@ -16,6 +16,8 @@ namespace awk_test
             else
                 input = args[0];
             interpreter.Interpret(Compiler.Compile(input));
+            foreach(var v in AwkSharp.AwkSharpMain.standard_out_stream)
+                Console.WriteLine(v);
        }
     }
 }
