@@ -4,7 +4,7 @@ using System;
 using AwkSharpTokens;
 using AwkSharpFunctions;
 using AwkSharp;
-
+using System.Text;
 namespace awkSharpInterpreter {
     public class interpreter {
 
@@ -485,12 +485,21 @@ namespace awkSharpInterpreter {
                     i = ogi;
                     if(condition[0].StartsWith("[STR:")){
                         Console.WriteLine("prstr");
-                        AwkSharpMain.standard_out_stream.Add(evaluate(condition, varType.STRING).Value.ToString());
+                        var b = ASCIIEncoding.ASCII.GetBytes(evaluate(condition, varType.STRING).Value.ToString() + "\n");
+                        foreach(var by in b)
+                            AwkSharpMain.standard_out_stream.WriteByte(by);
                     }
                     else if(condition[0].StartsWith("[V:")){
-                        AwkSharpMain.standard_out_stream.Add(Convert.ToString(evaluate(condition, variableLis[condition[0].Replace("[V:", "").Replace("]", "")].Type).Value));
+                        var b = ASCIIEncoding.ASCII.GetBytes(evaluate(condition, varType.STRING).Value.ToString() + "\n");
+                        foreach(var by in b)
+                            AwkSharpMain.standard_out_stream.WriteByte(by);
+                        
                     }
-                    else AwkSharpMain.standard_out_stream.Add("invalid print err");
+                    else {
+                        var b = ASCIIEncoding.ASCII.GetBytes(evaluate(condition, varType.STRING).Value.ToString() + "\n");
+                        foreach(var by in b)
+                            AwkSharpMain.standard_out_stream.WriteByte(by);
+                    }
                 } else if(input[i] == "LOCK_KEYWORD"){
                     if(input[i + 1].StartsWith("[V:")){
                         if(!variableLis.ContainsKey(input[i + 1].Replace("[V:", "").Replace("]", "")))

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using System;
 
 namespace AwkSharp{
     public class AwkSharpMain{
-        public static List<string> standard_out_stream = new List<string>();
+        public static System.IO.Stream standard_out_stream = Console.OpenStandardOutput();
     }
 }
