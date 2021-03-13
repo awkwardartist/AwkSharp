@@ -169,7 +169,7 @@ namespace awkSharpInterpreter {
                     // a declaration can only be carried on by Arithmetic Operations, PLUS, MULTIPLY, etc
                     // for example, x = 10 + 3 v;
                     // will only go to 3 because + only carries it on one step.
-                    if(variableLis[varname].State != SpecialState.locked){  
+                    if(variableLis[varname].State != SpecialState.locked){
                         List<string> condition = new List<string>();
                         bool carry_on = true;
                         for(int x = i + 1; x < input.Count; x++){
@@ -178,6 +178,7 @@ namespace awkSharpInterpreter {
                                     if(Tokens.ArithmeticOps_TOKENS[ind] == input[x]) carry_on = true;
                                 }
                                 if(!carry_on) break;
+                                if(!carry_on && !input[x].StartsWith("[")) break;
                             }
                             carry_on = false;
                             for(var ind = 0; ind < 6; ind++){
@@ -371,7 +372,6 @@ namespace awkSharpInterpreter {
                         }
                         // now we have end, so i+1 is else statement
                         i++;
-                        
                         if(i < input.Count && input[i] == "ELSE_STATEMENT"){
                             i++;
                             if(input[i] == "BLOCK_START"){
@@ -389,7 +389,6 @@ namespace awkSharpInterpreter {
                                 input[i + 1] = "";
                             }
                         }
-                        
                     } else{
                         // remove if brackets
                         int blockIndex = 1;
@@ -447,8 +446,6 @@ namespace awkSharpInterpreter {
                     string name = input[i + 1].Remove(0, input[i + 1].IndexOf(":") + 1).Replace("]", "");
                     if(variableLis.ContainsKey(name))
                         variableLis.Remove(name);
-                    if(!variableLis.ContainsKey(name))
-                        Console.WriteLine("destroyed " + name);
                 } else if(input[i] == "LOCAL_KEYWORD" && input[i + 1].StartsWith("[V")){
                     string name = input[i + 1].Remove(0, input[i + 1].IndexOf(":") + 1).Replace("]", "");
                     int bracketindex = 1;
@@ -483,23 +480,22 @@ namespace awkSharpInterpreter {
                         condition.Add(input[x]);
                     }
                     i = ogi;
-                    if(condition[0].StartsWith("[STR:")){
-                        Console.WriteLine("prstr");
-                        var b = ASCIIEncoding.ASCII.GetBytes(evaluate(condition, varType.STRING).Value.ToString() + "\n");
-                        foreach(var by in b)
-                            AwkSharpMain.standard_out_stream.WriteByte(by);
-                    }
-                    else if(condition[0].StartsWith("[V:")){
-                        var b = ASCIIEncoding.ASCII.GetBytes(evaluate(condition, varType.STRING).Value.ToString() + "\n");
-                        foreach(var by in b)
-                            AwkSharpMain.standard_out_stream.WriteByte(by);
-                        
-                    }
-                    else {
-                        var b = ASCIIEncoding.ASCII.GetBytes(evaluate(condition, varType.STRING).Value.ToString() + "\n");
-                        foreach(var by in b)
-                            AwkSharpMain.standard_out_stream.WriteByte(by);
-                    }
+                    // write to standard output
+                    string value = string.Empty;
+                    try{ value = evaluate(condition, varType.STRING).Value.ToString(); }
+                    catch{try {value = evaluate(condition, varType.INT).Value.ToString();} catch{
+                        try{value = evaluate(condition, varType.FLOAT).Value.ToString();} catch{
+                            try{value = evaluate(condition, varType.BOOL).Value.ToString();} catch{
+                            }
+                        }
+                    }}
+
+                    
+                    value = value.Remove(0, value.IndexOf(":") + 1).Replace("]", "").Replace("\"", "");
+                    var b = ASCIIEncoding.ASCII.GetBytes(value + "\n");
+                    foreach(var by in b)
+                        AwkSharpMain.standard_out_stream.WriteByte(by);
+                    
                 } else if(input[i] == "LOCK_KEYWORD"){
                     if(input[i + 1].StartsWith("[V:")){
                         if(!variableLis.ContainsKey(input[i + 1].Replace("[V:", "").Replace("]", "")))
