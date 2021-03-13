@@ -205,7 +205,7 @@ namespace awkSharpInterpreter {
                                 variableLis.Add(name, new VAR(name, varType.INT, evaluate(condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "")));
                             break;
                         case "STR:":
-                            name = input[i - 1].Replace("[V", "").Remove(input[i - 1].IndexOf(':')).Replace("STR:", "").Replace("]", "");
+                            name = input[i - 1].Replace("[V", "").Replace("[STR:", "").Replace("]", "").Replace(":", "").Replace("STR", "");
                             if(variableLis.ContainsKey(name))
                                 variableLis[name].Value = evaluate(condition, varType.STRING).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
                                 "[FLT:", "");
@@ -481,8 +481,7 @@ namespace awkSharpInterpreter {
                         Console.WriteLine(evaluate(condition, varType.STRING).Value);
                     }
                     else if(condition[0].StartsWith("[V:")){
-                        Console.WriteLine("prvar");
-                        Console.WriteLine(evaluate(condition, variableLis[condition[0].Replace("[V:", "").Replace("]", "")].Type).Value.ToString());
+                        Console.WriteLine(Convert.ToString(evaluate(condition, variableLis[condition[0].Replace("[V:", "").Replace("]", "")].Type).Value));
                     }
                     else Console.Write("condition[0]");
                 }

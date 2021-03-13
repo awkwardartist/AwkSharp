@@ -1,6 +1,2 @@
-/*
-    this is a test program, to
-    develop awk#.
-*/ 
-string x = "hello awk#!";
-print x;
+string hello = "hello, world!";
+print hello;
