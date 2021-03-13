@@ -499,6 +499,14 @@ namespace awkSharpInterpreter {
                             variableLis[input[i + 1].Replace("[V:", "").Replace("]", "")].State = SpecialState.locked;
                         }
                     } else throw new TypeAccessException();
+                } else if(input[i] == "UNLOCK_KEYWORD"){
+                    if(input[i + 1].StartsWith("[V:")){
+                        if(!variableLis.ContainsKey(input[i + 1].Replace("[V:", "").Replace("]", "")))
+                            throw new Exception("Awk_var_Exception: variable doesn't exist.");
+                        else {
+                            variableLis[input[i + 1].Replace("[V:", "").Replace("]", "")].State = SpecialState.none;
+                        }
+                    }
                 }
             }
         }

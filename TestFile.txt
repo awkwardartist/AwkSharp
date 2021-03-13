@@ -1,4 +1,6 @@
 string hello = "hello, world!";
 lock hello;
 hello = "hi";
+unlock hello = "new thing";
+lock hello = "is this program useless? yes.";
 print hello;
