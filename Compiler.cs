@@ -63,6 +63,7 @@ namespace AwkSharpCompiler {
             for(int i = 0; i < wordList.Count; i++){
                 if(string.IsNullOrEmpty(wordList[i])) wordList.RemoveAt(i);
             }
+            int index = 0;
             foreach(var s in wordList){
                 bool hasChosen = false;
                 
@@ -97,8 +98,16 @@ namespace AwkSharpCompiler {
                         hasChosen= true;
                     }
                 }
-                if(!hasChosen && s.StartsWith("\"") && s.EndsWith("\"")){
-                    allToks.Add("[STR:" + s + "]");
+                if(!hasChosen && s.StartsWith("\"")){
+                    string val = string.Empty;
+                    int iterind = index;
+                    while(!val.EndsWith("\"")){
+                        val += " " + wordList[iterind];
+                        
+                        iterind++;
+                    }
+                    val = val.TrimStart();
+                    allToks.Add("[STR:" + val + "]");
                     hasChosen = true;
                 }
                 if(!hasChosen){
@@ -127,6 +136,7 @@ namespace AwkSharpCompiler {
                     } catch{}
                     
                 }
+                index++;
             }
             for(int i = 1; i < allToks.Count; i++){
                 if(allToks[i].StartsWith("[V:EL") && string.IsNullOrWhiteSpace(allToks[i].Replace("[V:EL", "").Replace("]",""))) allToks[i] = "ELSE_STATEMENT";

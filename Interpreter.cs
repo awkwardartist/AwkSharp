@@ -101,7 +101,6 @@ namespace awkSharpInterpreter {
                             VAR v = variableLis[name];
                             if(v.Type == varType.STRING){
                                 inp[i] = "[STR:" + v.Value.ToString() + "]";
-                                Console.WriteLine(inp[i]);
                             }
                             else
                                 throw new Exception("wrong type provided!");
@@ -115,7 +114,6 @@ namespace awkSharpInterpreter {
                             i--;
                             inp.RemoveRange(i, 3);
                             inp.Insert(i, newval);
-                            Console.Write(newval);
                         }
                     }
                 break;
@@ -217,8 +215,6 @@ namespace awkSharpInterpreter {
                         default:
                             variableLis[input[i-1].Replace("[V:", "").Replace("]", "")].Value = evaluate(condition, variableLis[input[i-1].Replace("[V:", "").Replace("]", "")].Type).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
                                 "[FLT:", "");
-                            Console.WriteLine(evaluate(condition, variableLis[input[i-1].Replace("[V:", "").Replace("]", "")].Type).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
-                                "[FLT:", ""));
                             break;
                     }
                     
@@ -480,7 +476,15 @@ namespace awkSharpInterpreter {
                         condition.Add(input[x]);
                     }
                     i = ogi;
-                    Console.WriteLine(evaluate(condition, varType.INT).Value);
+                    if(condition[0].StartsWith("[STR:")){
+                        Console.WriteLine("prstr");
+                        Console.WriteLine(evaluate(condition, varType.STRING).Value);
+                    }
+                    else if(condition[0].StartsWith("[V:")){
+                        Console.WriteLine("prvar");
+                        Console.WriteLine(evaluate(condition, variableLis[condition[0].Replace("[V:", "").Replace("]", "")].Type).Value.ToString());
+                    }
+                    else Console.Write("condition[0]");
                 }
             }
         }
