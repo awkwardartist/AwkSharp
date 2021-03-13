@@ -2,8 +2,6 @@
     this is a test program, to
     develop awk#.
 */ 
-string x = "val";
-IF "val" equ x {
+string x = "val" + "someSTR";
 
-}
 

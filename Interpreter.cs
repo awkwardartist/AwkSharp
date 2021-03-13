@@ -107,6 +107,17 @@ namespace awkSharpInterpreter {
                                 throw new Exception("wrong type provided!");
                         }
                     }
+                    for(int i = 0; i < inp.Count; i++){
+                        if(inp[i] == "PLUS"){
+                            string left = inp[i - 1].Replace("[STR:\"", "").Replace("\"]", "");
+                            string right = inp[i + 1].Replace("[STR:\"", "").Replace("\"]", "");
+                            string newval = "\"" + left + right + "\"";
+                            i--;
+                            inp.RemoveRange(i, 3);
+                            inp.Insert(i, newval);
+                            Console.Write(newval);
+                        }
+                    }
                 break;
             }
             result.Value = inp[0];
@@ -174,29 +185,43 @@ namespace awkSharpInterpreter {
                         }
                         condition.Add(input[x]);
                     }
-                    varType ty = varType.INT; // placeholder lol
+                    varType ty = new varType(); // placeholder lol
                     string name = string.Empty;
                     switch(input[i - 1].Replace("[V", "").Remove(input[i - 1].IndexOf(':') - 1)){
                         case "INT:":
                             ty = varType.INT;
                             name = input[i - 1].Replace("[V", "").Remove(0, input[i - 1].IndexOf(':') - 1).Replace("INT:", "").Replace("]", "");
+                            if(variableLis.ContainsKey(name))
+                                variableLis[name].Value = evaluate(condition, varType.STRING).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
+                                "[FLT:", "");
+                            else 
+                                variableLis.Add(name, new VAR(name, varType.INT, evaluate(condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "")));
                             break;
                         case "FLT:":
                             ty = varType.FLOAT;
                             name = input[i - 1].Replace("[V", "").Remove(input[i - 1].IndexOf(':')).Replace("FLT:", "");
+                            if(variableLis.ContainsKey(name))
+                                variableLis[name].Value = evaluate(condition, varType.STRING).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
+                                "[FLT:", "");
+                            else 
+                                variableLis.Add(name, new VAR(name, varType.INT, evaluate(condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "")));
                             break;
                         case "STR:":
-                            ty = varType.STRING;
                             name = input[i - 1].Replace("[V", "").Remove(input[i - 1].IndexOf(':')).Replace("STR:", "").Replace("]", "");
+                            if(variableLis.ContainsKey(name))
+                                variableLis[name].Value = evaluate(condition, varType.STRING).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
+                                "[FLT:", "");
+                            else
+                                variableLis.Add(name, new VAR(name, ty, evaluate(condition, varType.STRING).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "")));
                             break;
                         default:
+                            variableLis[input[i-1].Replace("[V:", "").Replace("]", "")].Value = evaluate(condition, variableLis[input[i-1].Replace("[V:", "").Replace("]", "")].Type).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
+                                "[FLT:", "");
+                            Console.WriteLine(evaluate(condition, variableLis[input[i-1].Replace("[V:", "").Replace("]", "")].Type).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
+                                "[FLT:", ""));
                             break;
                     }
-                    if(variableLis.ContainsKey(name))
-                        variableLis[name].Value = evaluate(condition, ty).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
-                            "[FLT:", "");
-                    else
-                        variableLis.Add(name, new VAR(name, ty, evaluate(condition, ty).Value.ToString().Replace("[INT:", "").Replace("]", "")));
+                    
                 } else if(input[i] == "IF_STATEMENT"){
                     List<string> left_condition = new List<string>();
                     string eval = string.Empty;
@@ -326,7 +351,7 @@ namespace awkSharpInterpreter {
                                 } else statement_state = false;
                             break;
                         }
-                    }
+                    } 
 
                     if(statement_state){
                         // remove else statement
