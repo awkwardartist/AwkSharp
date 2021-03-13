@@ -93,6 +93,21 @@ namespace awkSharpInterpreter {
                     }
                     
                 break;
+                case varType.STRING:
+                // replace all variables with their true values
+                    for(int i = 0; i < inp.Count; i++){
+                        if(inp[i].StartsWith("[V:")){
+                            string name = inp[i].Replace("[V:", "").Replace("]", "");
+                            VAR v = variableLis[name];
+                            if(v.Type == varType.STRING){
+                                inp[i] = "[STR:" + v.Value.ToString() + "]";
+                                Console.WriteLine(inp[i]);
+                            }
+                            else
+                                throw new Exception("wrong type provided!");
+                        }
+                    }
+                break;
             }
             result.Value = inp[0];
             return result;
@@ -170,11 +185,16 @@ namespace awkSharpInterpreter {
                             ty = varType.FLOAT;
                             name = input[i - 1].Replace("[V", "").Remove(input[i - 1].IndexOf(':')).Replace("FLT:", "");
                             break;
+                        case "STR:":
+                            ty = varType.STRING;
+                            name = input[i - 1].Replace("[V", "").Remove(input[i - 1].IndexOf(':')).Replace("STR:", "").Replace("]", "");
+                            break;
                         default:
                             break;
                     }
                     if(variableLis.ContainsKey(name))
-                        variableLis[name].Value = evaluate(condition, ty).Value.ToString().Replace("[INT:", "").Replace("]", "");
+                        variableLis[name].Value = evaluate(condition, ty).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[STR:", "").Replace(
+                            "[FLT:", "");
                     else
                         variableLis.Add(name, new VAR(name, ty, evaluate(condition, ty).Value.ToString().Replace("[INT:", "").Replace("]", "")));
                 } else if(input[i] == "IF_STATEMENT"){
@@ -297,7 +317,13 @@ namespace awkSharpInterpreter {
                             case "IS_EQUAL":
                                 if(evaluate(left_condition, varType.STRING).Value.ToString() == evaluate(right_condition, varType.STRING).Value.ToString()){
                                     statement_state = true;
-                                }
+                                } else statement_state = false;
+                                
+                            break;
+                            case "NOT_EQUAL":
+                                if(evaluate(left_condition, varType.STRING).Value.ToString() != evaluate(right_condition, varType.STRING).Value.ToString()){
+                                    statement_state = true;
+                                } else statement_state = false;
                             break;
                         }
                     }

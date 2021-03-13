@@ -3,7 +3,7 @@
     develop awk#.
 */ 
 string x = "val";
-IF "someVal" equ x {
+IF "val" equ x {
 
 }
 
