@@ -143,6 +143,8 @@ namespace awkSharpInterpreter {
                     input.RemoveAt(i);
                     i--;
                 }
+                if(input[i].StartsWith("[V:{"))
+                    input[i] = "BLOCK_START";
             }
 
             Console.WriteLine("----- interpreter says -----");
@@ -409,11 +411,19 @@ namespace awkSharpInterpreter {
                         string name = (input[i].Replace("[V:", "").Replace("]", ""));
                         i += 2; // move to open brack + 1
                         int x = 0;
-                        for(;input[i] != "CLOSING_BRACKET"; i++, x++){
+                        for(;input[i] != "CLOSING_BRACKET"; i++ ){
                             funcLis[name].Args[x].Value = input[i];
+                            x++;
                         }
-                        foreach(var v in funcLis[name].Args)
-                            variableLis.Add(v.Name, new VAR(v.Name, v.Type, v.Value));
+                        x = 0;
+                        foreach(var v in funcLis[name].Args){
+                            try{ variableLis.Add(v.Name.Remove(0, v.Name.IndexOf(":") + 1), new VAR(v.Name.Remove(0, v.Name.IndexOf(":") + 1), v.Type, funcLis[name].Args[x].Value)); }
+                            catch {
+                                variableLis[v.Name.Remove(0, v.Name.IndexOf(":") + 1)].Value = funcLis[name].Args[x].Value;
+                            }
+                            Console.WriteLine(v.Name.Remove(0, v.Name.IndexOf(":") + 1) + ":" + funcLis[name].Args[x].Value);
+                            x++;
+                        }
                         interpreter.Interpret(funcLis[name].Instructions);
                         foreach(var v in funcLis[name].Args)
                             variableLis.Remove(v.Name);
@@ -484,10 +494,7 @@ namespace awkSharpInterpreter {
                     string value = string.Empty;
                     try{ value = evaluate(condition, varType.STRING).Value.ToString(); }
                     catch{try {value = evaluate(condition, varType.INT).Value.ToString();} catch{
-                        try{value = evaluate(condition, varType.FLOAT).Value.ToString();} catch{
-                            try{value = evaluate(condition, varType.BOOL).Value.ToString();} catch{
-                            }
-                        }
+                       
                     }}
 
                     

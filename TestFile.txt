@@ -1,5 +1,13 @@
-FUNC somef(int x int y){
-    print x;
-    print y;
+print "start";
+string z = "s";
+
+FUNC somef(string x) {
+    IF x equ "20" {
+        print "true:" + x;
+    } EL {
+        print "false";
+    }
 }
-somef(10 3);
+somef("20");
+print z;
+
