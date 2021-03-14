@@ -126,13 +126,8 @@ namespace AwkSharpCompiler {
                             hasChosen = true;
                         }
                         catch{}
-                    } else  try { if(allToks[allToks.Count-1] == "FUNCTION_DECLARATION"){
-                            allToks.Add("[FUNC:" + s + "]");
-                            hasChosen = true;
-                        } 
-                        else{
-                            allToks.Add("[V:" + s + "]");
-                        }
+                    } else  try { 
+                        allToks.Add("[V:" + s + "]");
                     } catch{}
                     
                 }

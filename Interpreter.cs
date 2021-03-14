@@ -406,52 +406,81 @@ namespace awkSharpInterpreter {
                     }
                     i = og_i + 1;
                 } else if(input[i].StartsWith("[V:") && i + 1 < input.Count && input[i + 1] == "OPENING_BRACKET"){
-                    // call function
-                    if(funcLis.ContainsKey(input[i].Replace("[V:", "").Replace("]", ""))){
-                        string name = (input[i].Replace("[V:", "").Replace("]", ""));
-                        i += 2; // move to open brack + 1
-                        int x = 0;
-                        for(;input[i] != "CLOSING_BRACKET"; i++ ){
-                            funcLis[name].Args[x].Value = input[i];
-                            x++;
-                        }
-                        x = 0;
-                        foreach(var v in funcLis[name].Args){
-                            try{ variableLis.Add(v.Name.Remove(0, v.Name.IndexOf(":") + 1), new VAR(v.Name.Remove(0, v.Name.IndexOf(":") + 1), v.Type, funcLis[name].Args[x].Value)); }
-                            catch {
-                                variableLis[v.Name.Remove(0, v.Name.IndexOf(":") + 1)].Value = funcLis[name].Args[x].Value;
+                    if(i - 1 >= 0 && input[i - 1] == "FUNCTION_DECLARATION"){
+                        string funcname = input[i].Replace("[V:", "").Replace("]", "");
+                        // declare
+                        int og_i = i - 1; // to be able to revert back to just before the func
+                        List<VAR> args = new List<VAR>();
+                        i++;
+                        
+                        while(input[i] != "CLOSING_BRACKET"){
+                            // loop which adds each argument in between the brackets to "args"
+                            if(input[i] != "OPENING_BRACKET"){
+
+                                // get name & string representation of type
+                                string varname = input[i].Remove(0, input[i].IndexOf(":") + 1).Replace("]", "");
+                                string vartype = input[i].Remove(input[i].IndexOf(":")).Replace("[V", "");
+
+                                // get type
+                                varType t = varType.STRING;
+                                switch(vartype){
+                                    case "STR": t = varType.STRING;
+                                    break;
+                                    case "INT": t = varType.INT;
+                                    break;
+                                    case "FLT": t = varType.FLOAT;
+                                    break;
+                                }
+                                var v = new VAR(varname, t, "");
+                                args.Add(v);
                             }
-                            Console.WriteLine(v.Name.Remove(0, v.Name.IndexOf(":") + 1) + ":" + funcLis[name].Args[x].Value);
-                            x++;
+                            i++;
                         }
-                        interpreter.Interpret(funcLis[name].Instructions);
-                        foreach(var v in funcLis[name].Args)
-                            variableLis.Remove(v.Name);
+                        // here, i is = to closing bracket
+                        
+                        i++; // move it onto BLOCK_START
+                        if(input[i] != "BLOCK_START") throw new Exception("Null Function Exception: Functions require to declare a body");
+                        i++; // now in the block
+                        int bracketindex = 1;
+                        List<string> instructions = new List<string>(); 
+                        
+                        while(true){
+                            // loop that gets all instructions in the block
+                            if(bracketindex == 0) break;
+                            if(input[i] == "BLOCK_START") bracketindex++;
+                            else if(input[i] == "BLOCK_END") bracketindex--;
+                            if(bracketindex <= 0) break;
+                            else instructions.Add(input[i]);
+                            input[i] = "";
+                            i++;
+                        }
+                        // chop it out of the script so it is only inserted when called on
+                        input.RemoveRange(og_i, i - og_i + 1);
+                        i = og_i - 1;
+                        funcLis.Add(funcname, new Function(funcname, instructions, args.ToArray()));
+                    } else {
+                        // call function
+                        string name = input[i].Replace("[V:", "").Replace("]", "");
+                        if(!funcLis.ContainsKey(name)) throw new Exception("Function Not Defined");
+                        Function func = funcLis[name];
+                        // get argument values
+                        int og_i = i;
+                        i += 2;
+                        int x = 0;
+                        while(input[i] != "CLOSING_BRACKET"){
+                            func.Args[x].Value = input[i];
+                            Console.WriteLine(input[i]);
+                            Console.WriteLine(func.Args[x].Name);
+                            x++;
+                            i++;
+                        }
+                        foreach(var v in func.Args){
+                            variableLis.Add(v.Name, v);
+                            input.InsertRange(i + 1, new string[] {"DESTROY_KEYWORD", v.Name});
+                        }
+                        
+                        input.InsertRange(i + 1, func.Instructions);
                     }
-                } else if(input[i].StartsWith("[FUNC:")){
-                    // function declaration
-                    int ogi = i;
-                    string name = input[i].Replace("[FUNC:", "").Replace("]", "");
-                    i++;
-                    i++;
-                    List<VAR> args = new List<VAR>();
-                    List<string> instructions = new List<string>();
-                    for(; input[i] != "CLOSING_BRACKET"; i++){
-                        args.Add(new VAR(input[i].Remove(0, input[i].IndexOf(":") - 1).Replace("]", ""), 
-                        varType.INT, "nullval"));
-                        // lets just say it's an integer for now
-                    }
-                    i++;
-                    int blockIndex = 1;
-                    for(i += 1; blockIndex > 0; i++){
-                        if(input[i] == "BLOCK_END") blockIndex--;
-                        if(input[i] == "BLOCK_START") blockIndex++;
-                        if(blockIndex == 0) break;
-                        instructions.Add(input[i]);
-                        input[i] = "";
-                    }
-                    i = ogi;
-                    funcLis.Add(name, new Function(name, instructions, args.ToArray()));
                 } else if(input[i] == "DESTROY_KEYWORD" && input[i + 1].StartsWith("[V:")){
                     string name = input[i + 1].Remove(0, input[i + 1].IndexOf(":") + 1).Replace("]", "");
                     if(variableLis.ContainsKey(name))
@@ -462,8 +491,8 @@ namespace awkSharpInterpreter {
                     int ogi = i;
                     bool block = false;
                     for(; i < input.Count;i++){
-                        if(input[i] == "CLOSING_BRACKET") bracketindex--;
-                        if(input[i] == "OPENING_BRACKET") bracketindex++;
+                        if(input[i] == "BLOCK_END") bracketindex--;
+                        if(input[i] == "BLOCK_START") bracketindex++;
                         if(bracketindex <= 0) {block = true; break;}
                     }
                     if(!block)
@@ -493,9 +522,7 @@ namespace awkSharpInterpreter {
                     // write to standard output
                     string value = string.Empty;
                     try{ value = evaluate(condition, varType.STRING).Value.ToString(); }
-                    catch{try {value = evaluate(condition, varType.INT).Value.ToString();} catch{
-                       
-                    }}
+                    catch{try {value = evaluate(condition, varType.INT).Value.ToString();} catch{}}
 
                     
                     value = value.Remove(0, value.IndexOf(":") + 1).Replace("]", "").Replace("\"", "");

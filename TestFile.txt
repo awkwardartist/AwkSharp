@@ -1,13 +1,8 @@
-print "start";
-string z = "s";
-
-FUNC somef(string x) {
-    IF x equ "20" {
-        print "true:" + x;
+FUNC testDeclaration(string teststr int another){
+   IF teststr equ "something" {
+       print "true!";
     } EL {
         print "false";
     }
 }
-somef("20");
-print z;
-
+testDeclaration( "something" );
