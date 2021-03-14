@@ -468,7 +468,7 @@ namespace awkSharpInterpreter {
                         i += 2;
                         int x = 0;
                         while(input[i] != "CLOSING_BRACKET"){
-                            func.Args[x].Value = input[i];
+                            func.Args[x].Value = input[i].Replace("[STR:", "").Replace("]", "");
                             Console.WriteLine(input[i]);
                             Console.WriteLine(func.Args[x].Name);
                             x++;
@@ -524,7 +524,6 @@ namespace awkSharpInterpreter {
                     try{ value = evaluate(condition, varType.STRING).Value.ToString(); }
                     catch{try {value = evaluate(condition, varType.INT).Value.ToString();} catch{}}
 
-                    
                     value = value.Remove(0, value.IndexOf(":") + 1).Replace("]", "").Replace("\"", "");
                     var b = ASCIIEncoding.ASCII.GetBytes(value + "\n");
                     foreach(var by in b)

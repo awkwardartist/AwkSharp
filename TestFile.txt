@@ -1,8 +1,8 @@
 FUNC testDeclaration(string teststr int another){
    IF teststr equ "something" {
-       print "true!";
-    } EL {
-        print "false";
-    }
+       print "true";
+   } EL {
+       print "false";
+   }
 }
 testDeclaration( "something" );
