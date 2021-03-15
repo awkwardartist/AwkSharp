@@ -1,5 +1,4 @@
 int x = 1;
-lock x;
 IF x equ 1 {
     print "true";
 } EL {
