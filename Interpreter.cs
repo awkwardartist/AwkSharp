@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using AwkSharp.Vars;
 using System;
 using AwkSharp.TokenList;
-using AwkSharp.Statements;
 using AwkSharp.Functions;
 using AwkSharp.IO;
 using System.Text;
