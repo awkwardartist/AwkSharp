@@ -18,7 +18,7 @@ namespace AwkSharp {
                     input = input.Remove(input.IndexOf("/*"), input.IndexOf("*/") - input.IndexOf("/*") + 2);
                 input = input.Replace("++", " += 1");
                 List<string> statements = new List<string>();
-                input = input.Replace("}", "};");
+                input = input.Replace("}", " };");
                 input.Replace("function", "function;");
                 input = input.Replace("{", " ;{");
                 for(int i = input.Length - 1; i > 0; i--){
@@ -53,12 +53,14 @@ namespace AwkSharp {
                 return statements;
             }
             public static List<string> Compile(string input){
+                input = input.Replace("}", "{}\n}");
                 var allToks = new List<string>(); // list of all the tokens
                 var ls = splitter(input);
                 List<string> wordList = new List<string>();
                 for(int i = 0; i < ls.Count; i++){
                     // process each part of the list
                     ls[i] = ls[i].Replace("(", " ( ").Replace(")", " )");
+                    ls[i] = ls[i].Replace("{", "{;");
                     wordList.AddRange(ls[i].Split(" "));
                 }
                 for(int i = 0; i < wordList.Count; i++){

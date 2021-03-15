@@ -140,11 +140,8 @@ namespace AwkSharp{
             /// </summary>
             public static void Interpret(List<string> input){
                 for(int i = 0; i < input.Count; i++){
-                    if(string.IsNullOrEmpty(input[i]) || string.IsNullOrWhiteSpace(input[i])){
-                        input.RemoveAt(i);
-                        i--;
-                    }
-                    if(input[i].StartsWith("[V:{"))
+                    
+                    if(input[i].Trim().StartsWith("[V:{") )
                         input[i] = "BLOCK_START";
                 }
 
@@ -441,21 +438,22 @@ namespace AwkSharp{
                             
                             i++; // move it onto BLOCK_START
                             if(input[i] != "BLOCK_START") throw new Exception("Null Function Exception: Functions require to declare a body");
-                            i++; // now in the block
+                            i += 1; // now in the block
                             int bracketindex = 1;
                             List<string> instructions = new List<string>(); 
                             
                             while(true){
                                 // loop that gets all instructions in the block
-                                if(bracketindex == 0) break;
+                                
                                 if(input[i] == "BLOCK_START") bracketindex += 1;
                                 else if(input[i] == "BLOCK_END") bracketindex -= 1;
                                 if(bracketindex == 0) break;
                                 else instructions.Add(input[i]);
                                 input[i] = "";
                                 i++;
+                                if(bracketindex == 0) break;
                             }
-                            instructions.InsertRange(instructions.Count - 3, new string[] {"[V:]","BLOCK_START","BLOCK_END"});
+                            
                             // chop it out of the script so it is only inserted when called on
                             input.RemoveRange(og_i, i - og_i + 1);
                             i = og_i - 1;
@@ -471,8 +469,6 @@ namespace AwkSharp{
                             int x = 0;
                             while(input[i] != "CLOSING_BRACKET"){
                                 func.Args[x].Value = input[i].Replace("[STR:", "").Replace("]", "");
-                                Console.WriteLine(input[i]);
-                                Console.WriteLine(func.Args[x].Name);
                                 x++;
                                 i++;
                             }

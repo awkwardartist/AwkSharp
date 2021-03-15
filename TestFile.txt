@@ -1,6 +1,11 @@
-int x = 1;
-IF x equ 1 {
-    print "true";
-} EL {
-    print "false"
+FUNC printThreeTimes(string to_print){
+    print to_print;
+    print to_print;
+    print to_print;
+    IF to_print equ "valuae" {
+        print "true";
+    } EL {
+        print "false";
+    }
 }
+printThreeTimes("valuaae");
