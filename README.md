@@ -16,4 +16,6 @@ be useful in many ways, but a key one is just overall flexibility you can't get 
 - Lock & Unlock keywords: These do exactly what they say they do. If you "lock" a variable, any attempts to assign a new value to it will leave it unchanged, 
 it will essentially be read only until you pass the unlock keyword.
 
+- All variables are global, meaning they can be accessed from anywhere. However, there is a local keyword that automatically destroys it at the end of the block
+
 - I will be adding more as I go, but for now, that's it. I'm still trying to make it work :D

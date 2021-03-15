@@ -1,6 +1,8 @@
-using System;
+using System.Collections.Generic;
 namespace AwkSharp {
     namespace Statements {
-        Console.Write("no");
+        public class IF_STATEMENT {
+            public string left_condition {get; set;}
+        }
     }
 }
