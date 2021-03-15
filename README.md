@@ -19,3 +19,18 @@ it will essentially be read only until you pass the unlock keyword.
 - All variables are global, meaning they can be accessed from anywhere. However, there is a local keyword that automatically destroys it at the end of the block
 
 - I will be adding more as I go, but for now, that's it. I'm still trying to make it work :D
+
+# Code Samples!
+
+- IF statements:
+
+
+```
+int x = 1;
+lock x;
+IF x equ 1 {
+    print "true";
+} EL {
+    print "false"
+}
+```
