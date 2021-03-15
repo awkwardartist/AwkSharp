@@ -1,8 +1,12 @@
 FUNC testDeclaration(string teststr int another){
+   print "f";
+   print "u";
+   print "n";
+   print "c";
    IF teststr equ "something" {
        print "true";
    } EL {
        print "false";
-   }
+    }
 }
-testDeclaration( "something" );
+testDeclaration("somethinga");

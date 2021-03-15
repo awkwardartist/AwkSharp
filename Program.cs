@@ -1,6 +1,5 @@
-﻿using System;
-using AwkSharpCompiler;
-using awkSharpInterpreter;
+﻿using AwkSharp.Compiler;
+using AwkSharp.Interpreter;
 using System.IO;
 
 namespace awk_test
@@ -15,7 +14,7 @@ namespace awk_test
                 input = File.ReadAllText(args[0]);
             else
                 input = args[0];
-            interpreter.Interpret(Compiler.Compile(input));
+            interpreter.Interpret(compiler.Compile(input));
        }
     }
 }
