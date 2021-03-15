@@ -414,7 +414,10 @@ namespace AwkSharp{
                             while(input[i] != "CLOSING_BRACKET"){
                                 // loop which adds each argument in between the brackets to "args"
                                 if(input[i] != "OPENING_BRACKET"){
-
+                                    if(string.IsNullOrWhiteSpace(input[i])){
+                                        i++;
+                                        continue;
+                                    }
                                     // get name & string representation of type
                                     string varname = input[i].Remove(0, input[i].IndexOf(":") + 1).Replace("]", "");
                                     string vartype = input[i].Remove(input[i].IndexOf(":")).Replace("[V", "");

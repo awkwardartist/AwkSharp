@@ -1,11 +1,7 @@
-FUNC printThreeTimes(string to_print){
-    print to_print;
-    print to_print;
-    print to_print;
-    IF to_print equ "valuae" {
+FUNC strcmp(int x){
+    IF x equ 1 {
         print "true";
-    } EL {
-        print "false";
     }
 }
-printThreeTimes("valuaae");
+strcmp(1);
+/* interpreter throws on eval when given an integer value. Thiis is.. Concerning.. */
