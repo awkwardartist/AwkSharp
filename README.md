@@ -25,7 +25,7 @@ it will essentially be read only until you pass the unlock keyword.
 - IF statements:
 
 
-```
+```cs
 int x = 1;
 lock x;
 IF x equ 1 {
