@@ -31,11 +31,11 @@ namespace AwkSharp {
                 "BLOCK_END", "FUNCTION_DECLARATION", "DESTROY_KEYWORD", "PRINT", "RETURN"
             };
             public static readonly string[] misctoks = new string[] {
-                "true", "false", "or", "and", "local", "lock", "unlock", ","
+                "true", "false", "or", "and", "local", "lock", "unlock", ",", "use"
             };
             public static readonly string[] misctoks_TOKENS = new string[] {
                 "TRUE_BOOL", "FALSE_BOOL", "OR_OP", "AND_OP", "LOCAL_KEYWORD", "LOCK_KEYWORD",
-                "UNLOCK_KEYWORD", "COMMA"
+                "UNLOCK_KEYWORD", "COMMA", "USE_TOKEN"
             };
             public enum TokenType {
                 INSTRUCTION,

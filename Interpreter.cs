@@ -5,6 +5,7 @@ using AwkSharp.TokenList;
 using AwkSharp.Functions;
 using AwkSharp.IO;
 using System.Text;
+using System.IO;
 namespace AwkSharp{ 
     namespace Interpreter {
         
@@ -45,7 +46,7 @@ namespace AwkSharp{
                                         variableLis.Add(z.Name, z);
                                         destroy.AddRange(new string[] {"DESTROY_KEYWORD", "[V:" + z.Name + "]"});
                                     }
-                                    
+                                    GlobalRet = "";
                                     interpreter.Interpret(func.Instructions);
                                     interpreter.Interpret(destroy);
                                     i = og_i;
@@ -151,10 +152,11 @@ namespace AwkSharp{
                                         variableLis.Add(z.Name, z);
                                         destroy.AddRange(new string[] {"DESTROY_KEYWORD", "[V:" + z.Name + "]"});
                                     }
-                                    
+                                    GlobalRet = "";
                                     interpreter.Interpret(func.Instructions);
                                     interpreter.Interpret(destroy);
                                     i = og_i;
+                                    
                                     inp[i] = GlobalRet;
                                 } else {
                                     string name = inp[i].Replace("[V:", "").Replace("]", "");
@@ -203,7 +205,28 @@ namespace AwkSharp{
                     if(input[i].Trim().StartsWith("[V:{") )
                         input[i] = "BLOCK_START";
                 }
-
+                for(int i = 0; i < input.Count; i++){
+                    if(input[i] == "USE_TOKEN" && input[i + 1].StartsWith("[STR:")){
+                        string path = input[i + 1].Replace("[STR:\"", "").Replace("\"]", "");
+                        string includepath = awk_test.Program.statargs[0].Replace("\\", "/");
+                        includepath = includepath.Remove(includepath.LastIndexOf("/"));
+                        if(File.Exists(includepath + path)){
+                            // part path
+                            path = includepath + path;
+                            input.RemoveRange(i, 2);
+                            List<string> lis = Compiler.compiler.Compile(File.ReadAllText(path));
+                            Interpret(lis);
+                        } else {
+                            // full path
+                            input.RemoveRange(i, 2);
+                            List<string> lis = Compiler.compiler.Compile(File.ReadAllText(path));
+                            Interpret(lis);
+                        }
+                        // if file doesnt exist, well, thats their problem
+                        i = 0;
+                    } 
+                    // bookmark
+                }
                 Console.WriteLine("----- interpreter says -----");
                 foreach(var s in input)
                     Console.WriteLine(s);
@@ -538,8 +561,10 @@ namespace AwkSharp{
                                 variableLis.Add(v.Name, v);
                                 input.InsertRange(i + 1, new string[] {"DESTROY_KEYWORD", v.Name});
                             }
+                            GlobalRet = "";
                             interpreter.Interpret(func.Instructions);
                             i = og_i;
+                            
                             input[i] = GlobalRet;
                         }
                     } else if(input[i] == "RETURN"){

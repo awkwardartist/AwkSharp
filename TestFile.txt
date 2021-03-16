@@ -1,12 +1,2 @@
-FUNC retstring(string s){
-    local s;
-    ret (s);
-}
-string x = retstring("someStr");
-x += "ing";
-print x;
-destroy x;
-int x = 10;
-print x;
-
-/* prints "someString", then prints 10 */
+use "includeme.txt";
+printword("someword");

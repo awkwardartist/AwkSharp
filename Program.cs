@@ -8,8 +8,10 @@ namespace awk_test
     class Program
     {
         public static string input = string.Empty;   
+        public static string[] statargs;
         static void Main(string[] args)
        {
+           statargs = args;
             if(File.Exists(args[0]))
                 input = File.ReadAllText(args[0]);
             else
