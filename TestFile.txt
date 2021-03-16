@@ -1,7 +1,7 @@
-FUNC strcmp(int x){
-    IF x equ 1 {
-        print "true";
-    }
+FUNC strcmp(int x int y){
+    print x;
+    print y;
+    print x + y;
 }
-strcmp(1);
+strcmp(12 1);
 /* interpreter throws on eval when given an integer value. Thiis is.. Concerning.. */

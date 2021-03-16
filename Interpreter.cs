@@ -15,6 +15,7 @@ namespace AwkSharp{
             ///</summary>
             public static VAR evaluate(List<string> inp, varType type){
                 VAR result = new VAR("result", type, "nullval");
+                inp.Remove("[V: ]");
                 switch(type){
                     case varType.INT:
                         // do in order of BEDMAS
@@ -25,8 +26,11 @@ namespace AwkSharp{
                                 string name = inp[i].Replace("[V:", "").Replace("]", "");
                                 VAR v = variableLis[name];
                                 if(v.Type == varType.INT || v.Type == varType.FLOAT){
-                                    inp[i] = "[INT:" + Convert.ToInt32(Convert.ToString(v.Value)) + "]";
-
+                                    int val;
+                                    try{ val = Convert.ToInt32(Convert.ToString(v.Value.ToString().Remove(0, v.Value.ToString().IndexOf(":") + 1)).Replace("]", "")); } catch {
+                                        throw new Exception("Fatal Exception Thrown");
+                                    }
+                                    inp[i] = "[INT:" + val + "]";
                                 }
                                 else
                                     throw new Exception("wrong type provided!");
