@@ -1,2 +1,5 @@
 use "includeme.txt";
-printword("someword");
+use "math.awk";
+
+printword("someword"); /* inside includeme.txt */
+print square(2); /* inside math.awk */

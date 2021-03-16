@@ -16,7 +16,7 @@ namespace awk_test
                 input = File.ReadAllText(args[0]);
             else
                 input = args[0];
-            interpreter.Interpret(compiler.Compile(input));
+            interpreter.Interpret(compiler.Compile(input), true);
        }
     }
 }

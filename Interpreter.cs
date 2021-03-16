@@ -199,7 +199,7 @@ namespace AwkSharp{
             /// <summary>
             /// Actually executes the code, takes Compiled Awk# list as input.
             /// </summary>
-            public static void Interpret(List<string> input){
+            public static void Interpret(List<string> input, bool printOut = false){
                 for(int i = 0; i < input.Count; i++){
                     
                     if(input[i].Trim().StartsWith("[V:{") )
@@ -213,24 +213,24 @@ namespace AwkSharp{
                         if(File.Exists(includepath + path)){
                             // part path
                             path = includepath + path;
-                            input.RemoveRange(i, 2);
+                            input.RemoveRange(i, 1);
                             List<string> lis = Compiler.compiler.Compile(File.ReadAllText(path));
                             Interpret(lis);
                         } else {
                             // full path
-                            input.RemoveRange(i, 2);
+                            input.RemoveRange(i, 1);
                             List<string> lis = Compiler.compiler.Compile(File.ReadAllText(path));
                             Interpret(lis);
                         }
                         // if file doesnt exist, well, thats their problem
-                        i = 0;
                     } 
-                    // bookmark
                 }
-                Console.WriteLine("----- interpreter says -----");
-                foreach(var s in input)
-                    Console.WriteLine(s);
-                Console.WriteLine("----------------------------");
+                if(printOut){
+                    Console.WriteLine("----- interpreter says -----");
+                    foreach(var s in input)
+                        Console.WriteLine(s);
+                    Console.WriteLine("----------------------------");
+                }
                 for(int i = 0; i < input.Count; i++){
                     // variable declarations
                     if(input[i].Contains("[VINT:")){
