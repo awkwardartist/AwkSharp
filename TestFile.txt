@@ -1,5 +1,6 @@
-use "includeme.txt";
-use "math.awk";
+int i = 10;
 
-printword("someword"); /* inside includeme.txt */
-print square(2); /* inside math.awk */
+WHL i > 0 {
+    print i;
+    i -= 1;
+}

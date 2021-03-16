@@ -308,6 +308,52 @@ namespace AwkSharp{
                             Console.WriteLine("warning: assigned locked variable, value unchanged");
                             Console.ForegroundColor = c;
                         }
+                    } else if(input[i] == "WHILE_STATEMENT") {
+                        // get conditions & evaluation operator
+                        List<string> left_condition = new List<string>();
+                        string eval = string.Empty;
+                        List<string> right_condition = new List<string>();
+                        bool left = true;
+                        bool carry_on = true;
+                        for(i += 1; i < input.Count; i++){
+                            foreach(var v in Tokens.ArithmeticEval_TOKENS){
+                                if(v == input[i] && left){
+                                    left = false;
+                                    eval = input[i];
+                                    i++;
+                                }
+                                if(!left) break;
+                            }
+                            if(!left) break;
+                            if(!carry_on){
+                                for(var ind = 0; ind < 4; ind++){
+                                    if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
+                                }
+                                if(!carry_on) break;
+                            }
+                            carry_on = false;
+                            for(var ind = 0; ind < 4; ind++){
+                                if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
+                            }
+                            left_condition.Add(input[i]);
+                        }
+                        carry_on = true;
+                        for(; i < input.Count; i++){
+                            if(input[i+1] == "BLOCK_START") break;
+                            
+                            if(!carry_on){
+                                for(var ind = 0; ind < 4; ind++){
+                                    if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
+                                }
+                                if(!carry_on) break;
+                            }
+                            carry_on = false;
+                            for(var ind = 0; ind < 4; ind++){
+                                if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
+                            }
+                            
+                        }
+                        right_condition.Add(input[i]);
                     } else if(input[i] == "IF_STATEMENT"){
                         List<string> left_condition = new List<string>();
                         string eval = string.Empty;
