@@ -354,6 +354,12 @@ namespace AwkSharp{
                             
                         }
                         right_condition.Add(input[i]);
+
+                        bool statement_state = false;
+                        int og_i = i;
+                        varType type = VAR.EvaluateType(left_condition[0]); // get type to evaluate
+                        
+                        
                     } else if(input[i] == "IF_STATEMENT"){
                         List<string> left_condition = new List<string>();
                         string eval = string.Empty;
@@ -403,27 +409,7 @@ namespace AwkSharp{
                     int og_i = i;
                     varType type = varType.INT; // placeholder to get rid of non assigned err
                     // use full condition to get type of equation. take type of first variable or obj
-                    if(left_condition[0].StartsWith("[V:")){
-                        // get type using var
-                        string name = left_condition[0].Replace("[V:", "").Replace("]", "");
-                        type = variableLis[name].Type;
-                    } else {
-                        // get type using literal value
-                        switch(left_condition[0].Remove(left_condition[0].IndexOf(":")).Replace("[", "")){
-                                case "STR":
-                                    type = varType.STRING;
-                                break;
-                                case "FLOAT":
-                                    type = varType.FLOAT;
-                                break;
-                                case "INT":
-                                    type = varType.INT;
-                                break;
-                            
-                            default:
-                                    break;
-                        }
-                    }
+                    type = VAR.EvaluateType(left_condition[0]);
                         if(type == varType.INT){
                             switch(eval){
                                 case "IS_EQUAL":

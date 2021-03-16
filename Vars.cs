@@ -14,6 +14,31 @@ namespace AwkSharp {
             locked,
         };
         public class VAR {
+            public static varType EvaluateType(string input){
+                varType type = varType.INT; // placeholder to get rid of non assigned err
+                // use full condition to get type of equation. take type of first variable or obj
+                if(input.StartsWith("[V:")){
+                    // get type using var
+                    string name = input.Replace("[V:", "").Replace("]", "");
+                    type = Interpreter.interpreter.variableLis[name].Type;
+                } else {
+                    // get type using literal value
+                    switch(input.Remove(input.IndexOf(":")).Replace("[", "")){
+                            case "STR":
+                                type = varType.STRING;
+                            break;
+                            case "FLOAT":
+                                type = varType.FLOAT;
+                            break;
+                            case "INT":
+                                type = varType.INT;
+                            break;
+                            default:
+                                break;
+                    }
+                }
+                return type;
+            }
             public SpecialState State {get; set;}
             public string Name {get;}
             public varType Type {get;}

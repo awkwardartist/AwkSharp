@@ -1,6 +1,6 @@
 int i = 10;
-
-WHL i > 0 {
-    print i;
-    i -= 1;
+IF i equ 10 {
+    print "true";
+} EL {
+    print "false";
 }
