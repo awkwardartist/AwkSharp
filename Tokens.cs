@@ -24,11 +24,11 @@ namespace AwkSharp {
                 "INT", "FLT", "STR", "CHR", "BOOL", 
             };
             public static readonly string[] Instructions = new string[] {
-                "ELIF", "YAND", "IF", "EL", "WHL", "FOR", "{", "}", "FUNC", "destroy", "print"
+                "ELIF", "YAND", "IF", "EL", "WHL", "FOR", "{", "}", "FUNC", "destroy", "print", "ret"
             };
             public static readonly string[] Instructions_TOKENS = new string[] {
                 "ELIF_STATEMENT", "ELIF_STATEMENT", "IF_STATEMENT", "ELSE_STATEMENT", "WHILE_STATEMENT", "FOR_STATEMENT", "BLOCK_START",
-                "BLOCK_END", "FUNCTION_DECLARATION", "DESTROY_KEYWORD", "PRINT"
+                "BLOCK_END", "FUNCTION_DECLARATION", "DESTROY_KEYWORD", "PRINT", "RETURN"
             };
             public static readonly string[] misctoks = new string[] {
                 "true", "false", "or", "and", "local", "lock", "unlock", ","

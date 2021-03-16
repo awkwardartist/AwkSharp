@@ -7,7 +7,9 @@ using AwkSharp.IO;
 using System.Text;
 namespace AwkSharp{ 
     namespace Interpreter {
+        
         public class interpreter {
+            public static string GlobalRet = string.Empty;
 
 
             ///<summary>
@@ -23,6 +25,32 @@ namespace AwkSharp{
                         // replace all variables with their true values
                         for(int i = 0; i < inp.Count; i++){
                             if(inp[i].StartsWith("[V:")){
+                                if(i + 1 < inp.Count && inp[i + 1] == "OPENING_BRACKET"){
+                                    // call function
+                                    
+                                    string n = inp[i].Replace("[V:", "").Replace("]", "");
+                                    if(!funcLis.ContainsKey(n)) throw new Exception("Function Not Defined");
+                                    Function func = funcLis[n];
+                                    // get argument values
+                                    int og_i = i;
+                                    i += 2;
+                                    int x = 0;
+                                    while(inp[i] != "CLOSING_BRACKET"){
+                                        func.Args[x].Value = inp[i].Replace("[STR:", "").Replace("]", "");
+                                        x++;
+                                        i++;
+                                    }
+                                    List<string> destroy = new List<string>();
+                                    foreach(var z in func.Args){
+                                        variableLis.Add(z.Name, z);
+                                        destroy.AddRange(new string[] {"DESTROY_KEYWORD", "[V:" + z.Name + "]"});
+                                    }
+                                    
+                                    interpreter.Interpret(func.Instructions);
+                                    interpreter.Interpret(destroy);
+                                    i = og_i;
+                                    inp[i] = GlobalRet;
+                                }
                                 string name = inp[i].Replace("[V:", "").Replace("]", "");
                                 VAR v = variableLis[name];
                                 if(v.Type == varType.INT || v.Type == varType.FLOAT){
@@ -103,13 +131,40 @@ namespace AwkSharp{
                     // replace all variables with their true values
                         for(int i = 0; i < inp.Count; i++){
                             if(inp[i].StartsWith("[V:")){
-                                string name = inp[i].Replace("[V:", "").Replace("]", "");
-                                VAR v = variableLis[name];
-                                if(v.Type == varType.STRING){
-                                    inp[i] = "[STR:" + v.Value.ToString() + "]";
+                                if(i + 1 < inp.Count && inp[i + 1] == "OPENING_BRACKET"){
+                                    // call function
+                                    
+                                    string n = inp[i].Replace("[V:", "").Replace("]", "");
+                                    if(!funcLis.ContainsKey(n)) throw new Exception("Function Not Defined");
+                                    Function func = funcLis[n];
+                                    // get argument values
+                                    int og_i = i;
+                                    i += 2;
+                                    int x = 0;
+                                    while(inp[i] != "CLOSING_BRACKET"){
+                                        func.Args[x].Value = inp[i].Replace("[STR:", "").Replace("]", "");
+                                        x++;
+                                        i++;
+                                    }
+                                    List<string> destroy = new List<string>();
+                                    foreach(var z in func.Args){
+                                        variableLis.Add(z.Name, z);
+                                        destroy.AddRange(new string[] {"DESTROY_KEYWORD", "[V:" + z.Name + "]"});
+                                    }
+                                    
+                                    interpreter.Interpret(func.Instructions);
+                                    interpreter.Interpret(destroy);
+                                    i = og_i;
+                                    inp[i] = GlobalRet;
+                                } else {
+                                    string name = inp[i].Replace("[V:", "").Replace("]", "");
+                                    VAR v = variableLis[name];
+                                    if(v.Type == varType.STRING){
+                                        inp[i] = "[STR:" + v.Value.ToString() + "]";
+                                    }
+                                    else
+                                        throw new Exception("wrong type provided!");
                                 }
-                                else
-                                    throw new Exception("wrong type provided!");
                             }
                         }
                         for(int i = 0; i < inp.Count; i++){
@@ -483,10 +538,31 @@ namespace AwkSharp{
                                 variableLis.Add(v.Name, v);
                                 input.InsertRange(i + 1, new string[] {"DESTROY_KEYWORD", v.Name});
                             }
-                            
-                            input.InsertRange(i + 1, func.Instructions);
+                            interpreter.Interpret(func.Instructions);
+                            i = og_i;
+                            input[i] = GlobalRet;
                         }
-                    } else if(input[i] == "DESTROY_KEYWORD" && input[i + 1].StartsWith("[V:")){
+                    } else if(input[i] == "RETURN"){
+                        if(input[i + 1] != "OPENING_BRACKET"){
+                            throw new Exception("return values must be in brackets!");
+                        } else {
+                            i += 2; // go to bracket + 1 for loop
+                            List<string> equ = new List<string>(); // to pass to evaluate
+                            for(; input[i] != "CLOSING_BRACKET"; i++){
+                                equ.Add(input[i]);
+                            }
+                            varType equType = varType.INT;
+                            if(equ[0].Contains("INT")){
+                                equType = varType.INT;
+                            } else if(equ[0].Contains("STRING")){
+                                equType = varType.STRING;
+                            } else if(equ[0].StartsWith("[V:")){
+                                equType = variableLis[equ[0].Replace("[V:", "").Replace("]", "")].Type;
+                            }
+                            GlobalRet = evaluate(equ, equType).Value.ToString();
+                            break;
+                        }
+                    }else if(input[i] == "DESTROY_KEYWORD" && input[i + 1].StartsWith("[V:")){
                         string name = input[i + 1].Remove(0, input[i + 1].IndexOf(":") + 1).Replace("]", "");
                         if(variableLis.ContainsKey(name))
                             variableLis.Remove(name);
@@ -520,9 +596,12 @@ namespace AwkSharp{
                             carry_on = false;
                             for(var ind = 0; ind < 6; ind++){
                                 if(Tokens.ArithmeticOps_TOKENS[ind] == input[x]) carry_on = true;
+                                if(input[x] == "CLOSING_BRACKET" && x + 1 < input.Count && input[x + 1] == Tokens.ArithmeticOps_TOKENS[ind])
+                                    carry_on = true;    
                             }
                             condition.Add(input[x]);
                         }
+                        
                         i = ogi;
                         // write to standard output
                         string value = string.Empty;

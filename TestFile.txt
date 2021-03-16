@@ -1,7 +1,12 @@
-FUNC strcmp(int x int y){
-    print x;
-    print y;
-    print x + y;
+FUNC retstring(string s){
+    local s;
+    ret (s);
 }
-strcmp(12 1);
-/* interpreter throws on eval when given an integer value. Thiis is.. Concerning.. */
+string x = retstring("someStr");
+x += "ing";
+print x;
+destroy x;
+int x = 10;
+print x;
+
+/* prints "someString", then prints 10 */
