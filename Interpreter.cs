@@ -369,52 +369,7 @@ namespace AwkSharp{
                             if(bracketindex == 0) break;
                             else while_block.Add(input[i]);
                         }
-                        if(type == varType.INT){
-                            switch(eval){
-                                case "IS_EQUAL":
-                                    if(evaluate(left_condition, varType.INT).Value.ToString() == evaluate(right_condition, varType.INT).Value.ToString())
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "NOT_EQUAL":
-                                    if(evaluate(left_condition, varType.INT).Value.ToString() != evaluate(right_condition, varType.INT).Value.ToString())
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "IS_UNDER":
-                                    if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) < 
-                                    Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "UNDER_EQUAL":
-                                    if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) <= 
-                                    Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "IS_OVER":
-                                    if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) >
-                                    Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "OVER_EQUAL":
-                                    if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) >=
-                                    Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                default:
-                                    throw new NotImplementedException();
-                            }
-                        }
+                        statement_state = VAR.EvaluateVars(left_condition, eval, right_condition, type);
                     } else if(input[i] == "IF_STATEMENT"){
                         List<string> left_condition = new List<string>();
                         string eval = string.Empty;
@@ -465,67 +420,7 @@ namespace AwkSharp{
                     varType type = varType.INT; // placeholder to get rid of non assigned err
                     // use full condition to get type of equation. take type of first variable or obj
                     type = VAR.EvaluateType(left_condition[0]);
-                        if(type == varType.INT){
-                            switch(eval){
-                                case "IS_EQUAL":
-                                    if(evaluate(left_condition, varType.INT).Value.ToString() == evaluate(right_condition, varType.INT).Value.ToString())
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "NOT_EQUAL":
-                                    if(evaluate(left_condition, varType.INT).Value.ToString() != evaluate(right_condition, varType.INT).Value.ToString())
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "IS_UNDER":
-                                    if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) < 
-                                    Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "UNDER_EQUAL":
-                                    if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) <= 
-                                    Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "IS_OVER":
-                                    if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) >
-                                    Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                case "OVER_EQUAL":
-                                    if(Convert.ToInt32(evaluate(left_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")) >=
-                                    Convert.ToInt32(evaluate(right_condition, varType.INT).Value.ToString().Replace("[INT:", "").Replace("]", "").Replace("[FLT:", "")))
-                                        statement_state = true;
-                                    else
-                                        statement_state = false;
-                                    break;
-                                default:
-                                    throw new NotImplementedException();
-                            }
-                        } else if(type == varType.STRING){
-                            switch(eval) {
-                                case "IS_EQUAL":
-                                    if(evaluate(left_condition, varType.STRING).Value.ToString() == evaluate(right_condition, varType.STRING).Value.ToString()){
-                                        statement_state = true;
-                                    } else statement_state = false;
-                                    
-                                break;
-                                case "NOT_EQUAL":
-                                    if(evaluate(left_condition, varType.STRING).Value.ToString() != evaluate(right_condition, varType.STRING).Value.ToString()){
-                                        statement_state = true;
-                                    } else statement_state = false;
-                                break;
-                            }
-                        } 
-
+                        statement_state = VAR.EvaluateVars(left_condition, eval, right_condition, type); 
                         if(statement_state){
                             // remove else statement
                             // input[i + 1] == BLOCK_START
