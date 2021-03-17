@@ -356,8 +356,9 @@ namespace AwkSharp{
                                 for(var ind = 0; ind < 4; ind++){
                                     if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
                                 }
-                                right_condition.Add(input[i]);
+                                
                             }
+                            right_condition.Add(input[i]);
                             
                             int og_i = i;
                             varType type = VAR.EvaluateType(left_condition[0]); // get type to evaluate
