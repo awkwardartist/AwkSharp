@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>awk_test</RootNamespace>
+    <RootNamespace>AwkSharp</RootNamespace>
   </PropertyGroup>
 
 </Project>

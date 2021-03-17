@@ -2,7 +2,7 @@
 using AwkSharp.Interpreter;
 using System.IO;
 
-namespace awk_test
+namespace AwkSharp
 {
     
     class Program

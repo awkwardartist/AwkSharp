@@ -17,7 +17,6 @@ namespace AwkSharp {
         public class VAR {
             public static bool EvaluateVars(List<string> left_condition, string eval, List<string> right_condition, varType type){
                 bool statement_state = false;
-                
                 if(type == varType.INT){
                     switch(eval){
                         case "IS_EQUAL":

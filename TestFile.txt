@@ -1,6 +1,5 @@
 int i = 10;
-IF i <= 10 {
-    print "true";
-} EL {
-    print "false";
+WHL i equ 10 {
+    print "in loop";
+    i = 2;
 }

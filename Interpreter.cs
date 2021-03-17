@@ -208,7 +208,7 @@ namespace AwkSharp{
                 for(int i = 0; i < input.Count; i++){
                     if(input[i] == "USE_TOKEN" && input[i + 1].StartsWith("[STR:")){
                         string path = input[i + 1].Replace("[STR:\"", "").Replace("\"]", "");
-                        string includepath = awk_test.Program.statargs[0].Replace("\\", "/");
+                        string includepath = AwkSharp.Program.statargs[0].Replace("\\", "/");
                         includepath = includepath.Remove(includepath.LastIndexOf("/"));
                         if(File.Exists(includepath + path)){
                             // part path
@@ -354,7 +354,7 @@ namespace AwkSharp{
                             
                         }
                         right_condition.Add(input[i]);
-
+                        
                         bool statement_state = false;
                         int og_i = i;
                         varType type = VAR.EvaluateType(left_condition[0]); // get type to evaluate
@@ -363,13 +363,21 @@ namespace AwkSharp{
                         i+=2; // move to { + 1
                         List<string> while_block = new List<string>();
                         int bracketindex = 1;
-                        for(; i < input.Count; i++){
-                            if(input[i] == "CLOSING_BRACKET") bracketindex--;
-                            else if(input[i] == "OPENING_BRACKET") bracketindex++;
+                        for(;bracketindex > 0; i++){
+                            if(input[i] == "BLOCK_END") bracketindex--;
+                            else if(input[i] == "BLOCK_START") bracketindex++;
                             if(bracketindex == 0) break;
-                            else while_block.Add(input[i]);
+                            while_block.Add(input[i]);
+                        }
+                        foreach(var s in while_block){
+                            Console.WriteLine(s);
                         }
                         statement_state = VAR.EvaluateVars(left_condition, eval, right_condition, type);
+                        while(statement_state){
+                            Interpret(while_block, true);
+                            statement_state = VAR.EvaluateVars(left_condition, eval, right_condition, type);
+                            while(true);
+                        }
                     } else if(input[i] == "IF_STATEMENT"){
                         List<string> left_condition = new List<string>();
                         string eval = string.Empty;
@@ -401,7 +409,6 @@ namespace AwkSharp{
                         carry_on = true;
                         for(; i < input.Count; i++){
                             if(input[i+1] == "BLOCK_START") break;
-                            
                             if(!carry_on){
                                 for(var ind = 0; ind < 4; ind++){
                                     if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;

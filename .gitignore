@@ -4,3 +4,4 @@ net5.0
 obj
 scripts
 awk#test.csproj
+publish.sh
