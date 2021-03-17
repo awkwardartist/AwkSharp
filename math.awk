@@ -8,3 +8,6 @@ FUNC square(int arg){
 FUNC cube(int arg){
     ret (arg * arg * arg);
 }
+FUNC sqroot(int arg){
+    
+}

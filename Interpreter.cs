@@ -309,9 +309,10 @@ namespace AwkSharp{
                             Console.ForegroundColor = c;
                         }
                     } else if(input[i] == "WHILE_STATEMENT") {
-                        
                         bool statement_state = true;
+                        int og_og_i = i;
                         while(statement_state){
+                            
                             // execute in here, instead
                             // get conditions & evaluation operator
                             statement_state = false;
@@ -358,6 +359,7 @@ namespace AwkSharp{
                                 }
                                 
                             }
+                            
                             right_condition.Add(input[i]);
                             
                             int og_i = i;
@@ -373,12 +375,25 @@ namespace AwkSharp{
                                 if(bracketindex == 0) break;
                                 while_block.Add(input[i]);
                             }
-                            foreach(var s in while_block){
-                                Console.WriteLine(s);
-                            }
                             statement_state = VAR.EvaluateVars(left_condition, eval, right_condition, type);
+                            
+                            if(statement_state){Interpret(while_block);}
+                            i = og_og_i;
                         }
-                        
+                        // while loop begone
+                        while(input[i] != "BLOCK_START") {i++;}
+                        // now input[i] is block start, block index loop time!
+                        int bracketind = 1;
+                        i++;
+                        for(; bracketind > 0; i++){
+                            if(input[i] == "BLOCK_START") bracketind++;
+                            if(input[i] == "BLOCK_END") bracketind--;
+                            if(bracketind <= 0) {
+                                while(input[i] != "BLOCK_END") {i++;}
+                            }
+                        }
+                        i++;
+                        // now i is after the loop, so therefore it will pass it
                     } else if(input[i] == "IF_STATEMENT"){
                         List<string> left_condition = new List<string>();
                         string eval = string.Empty;

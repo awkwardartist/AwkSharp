@@ -1,7 +1,6 @@
-int i = 10;
-
-IF i <= 10 {
-    print "true";
-} EL {
-    print "false";
+use "math.awk";
+int i = 30;
+WHL i > 16 {
+    print i;
+    i -= 1;
 }
