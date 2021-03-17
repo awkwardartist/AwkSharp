@@ -309,75 +309,75 @@ namespace AwkSharp{
                             Console.ForegroundColor = c;
                         }
                     } else if(input[i] == "WHILE_STATEMENT") {
-                        // get conditions & evaluation operator
-                        List<string> left_condition = new List<string>();
-                        string eval = string.Empty;
-                        List<string> right_condition = new List<string>();
-                        bool left = true;
-                        bool carry_on = true;
-                        for(i += 1; i < input.Count; i++){
-                            foreach(var v in Tokens.ArithmeticEval_TOKENS){
-                                if(v == input[i] && left){
-                                    left = false;
-                                    eval = input[i];
-                                    i++;
+                        
+                        bool statement_state = true;
+                        while(statement_state){
+                            // execute in here, instead
+                            // get conditions & evaluation operator
+                            statement_state = false;
+                            List<string> left_condition = new List<string>();
+                            string eval = string.Empty;
+                            List<string> right_condition = new List<string>();
+                            bool left = true;
+                            bool carry_on = true;
+                            for(i += 1; i < input.Count; i++){
+                                foreach(var v in Tokens.ArithmeticEval_TOKENS){
+                                    if(v == input[i] && left){
+                                        left = false;
+                                        eval = input[i];
+                                        i++;
+                                    }
+                                    if(!left) break;
                                 }
                                 if(!left) break;
-                            }
-                            if(!left) break;
-                            if(!carry_on){
+                                if(!carry_on){
+                                    for(var ind = 0; ind < 4; ind++){
+                                        if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
+                                    }
+                                    if(!carry_on) break;
+                                }
+                                carry_on = false;
                                 for(var ind = 0; ind < 4; ind++){
                                     if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
                                 }
-                                if(!carry_on) break;
+                                left_condition.Add(input[i]);
                             }
-                            carry_on = false;
-                            for(var ind = 0; ind < 4; ind++){
-                                if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
-                            }
-                            left_condition.Add(input[i]);
-                        }
-                        carry_on = true;
-                        for(; i < input.Count; i++){
-                            if(input[i+1] == "BLOCK_START") break;
-                            
-                            if(!carry_on){
+                            carry_on = true;
+                            for(; i < input.Count; i++){
+                                if(input[i+1] == "BLOCK_START") break;
+                                
+                                if(!carry_on){
+                                    for(var ind = 0; ind < 4; ind++){
+                                        if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
+                                    }
+                                    if(!carry_on) break;
+                                }
+                                carry_on = false;
                                 for(var ind = 0; ind < 4; ind++){
                                     if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
                                 }
-                                if(!carry_on) break;
-                            }
-                            carry_on = false;
-                            for(var ind = 0; ind < 4; ind++){
-                                if(Tokens.ArithmeticOps_TOKENS[ind] == input[i]) carry_on = true;
+                                right_condition.Add(input[i]);
                             }
                             
-                        }
-                        right_condition.Add(input[i]);
-                        
-                        bool statement_state = false;
-                        int og_i = i;
-                        varType type = VAR.EvaluateType(left_condition[0]); // get type to evaluate
+                            int og_i = i;
+                            varType type = VAR.EvaluateType(left_condition[0]); // get type to evaluate
 
-                        // get the block of while
-                        i+=2; // move to { + 1
-                        List<string> while_block = new List<string>();
-                        int bracketindex = 1;
-                        for(;bracketindex > 0; i++){
-                            if(input[i] == "BLOCK_END") bracketindex--;
-                            else if(input[i] == "BLOCK_START") bracketindex++;
-                            if(bracketindex == 0) break;
-                            while_block.Add(input[i]);
-                        }
-                        foreach(var s in while_block){
-                            Console.WriteLine(s);
-                        }
-                        statement_state = VAR.EvaluateVars(left_condition, eval, right_condition, type);
-                        while(statement_state){
-                            Interpret(while_block, true);
+                            // get the block of while
+                            i+=2; // move to { + 1
+                            List<string> while_block = new List<string>();
+                            int bracketindex = 1;
+                            for(;bracketindex > 0; i++){
+                                if(input[i] == "BLOCK_END") bracketindex--;
+                                else if(input[i] == "BLOCK_START") bracketindex++;
+                                if(bracketindex == 0) break;
+                                while_block.Add(input[i]);
+                            }
+                            foreach(var s in while_block){
+                                Console.WriteLine(s);
+                            }
                             statement_state = VAR.EvaluateVars(left_condition, eval, right_condition, type);
-                            while(true);
                         }
+                        
                     } else if(input[i] == "IF_STATEMENT"){
                         List<string> left_condition = new List<string>();
                         string eval = string.Empty;
